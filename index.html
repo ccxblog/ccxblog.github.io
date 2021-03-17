@@ -155,6 +155,108 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ccxblog.gitee.io/2021/03/16/java%E5%B8%B8%E7%94%A8%E7%B1%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/aa.jpg">
+      <meta itemprop="name" content="Chen Chang Xi">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XixiBlog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/16/java%E5%B8%B8%E7%94%A8%E7%B1%BB/" class="post-title-link" itemprop="url">Java常用类</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-16 08:43:10" itemprop="dateCreated datePublished" datetime="2021-03-16T08:43:10+08:00">2021-03-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-17 19:29:05" itemprop="dateModified" datetime="2021-03-17T19:29:05+08:00">2021-03-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <meta name="referrer" content="no-referrer" />
+
+
+
+<h2 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h2><h3 id="String"><a href="#String" class="headerlink" title="String"></a>String</h3><ul>
+<li><p><code>String</code> 是声明为 final 的 ， 所以不可被继承</p>
+</li>
+<li><p><code>String</code>实现了 Serializable 接口（可序列化接口）：所以String支持序列化</p>
+<ul>
+<li>实现了 Comparable 接口 ， 表示 String 可以比较大小</li>
+</ul>
+</li>
+<li><p><code>String</code> 内部 定义了 final 的 char 类型数组 value 用于存储字符串数据 ， 所以数组不能被重新赋值，且数组的元素也不能被修改。</p>
+</li>
+</ul>
+<p>所以 String 代表一个不可变的字符序列 , 当对 String 对象进行赋值 或 进行连接操作时 需要重新指定内存区域赋值 ， 不能使用原有的 value 进行赋值 </p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token comment">// String 开头源码</span>
+<span class="token keyword">public</span> <span class="token keyword">final</span> <span class="token keyword">class</span> <span class="token class-name">String</span>
+    <span class="token keyword">implements</span> java<span class="token punctuation">.</span>io<span class="token punctuation">.</span><span class="token class-name">Serializable</span><span class="token punctuation">,</span> <span class="token class-name">Comparable</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">String</span><span class="token punctuation">></span></span><span class="token punctuation">,</span> <span class="token class-name">CharSequence</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">/** The value is used for character storage. */</span>
+    <span class="token keyword">private</span> <span class="token keyword">final</span> <span class="token keyword">char</span> value<span class="token punctuation">[</span><span class="token punctuation">]</span><span class="token punctuation">;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2021/03/16/java%E5%B8%B8%E7%94%A8%E7%B1%BB/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://ccxblog.gitee.io/2021/03/15/java%E5%A4%9A%E7%BA%BF%E7%A8%8B/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -178,9 +280,24 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-03-15 18:29:38 / 修改时间：18:34:32" itemprop="dateCreated datePublished" datetime="2021-03-15T18:29:38+08:00">2021-03-15</time>
+              <time title="创建时间：2021-03-15 18:29:38" itemprop="dateCreated datePublished" datetime="2021-03-15T18:29:38+08:00">2021-03-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-03-16 08:42:09" itemprop="dateModified" datetime="2021-03-16T08:42:09+08:00">2021-03-16</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
+                </span>
             </span>
 
           
@@ -195,9 +312,11 @@
 
       
           <meta name="referrer" content="no-referrer" />
+## 多线程
 
 
-<h2 id="多线程"><a href="#多线程" class="headerlink" title="多线程"></a>多线程</h2><p>程序：是为了完成特定任务，用某种编程语言编写的一组指令集合。是一段<strong>静态的代码</strong></p>
+
+<p>程序：是为了完成特定任务，用某种编程语言编写的一组指令集合。是一段<strong>静态的代码</strong></p>
 <p>进程：是程序的一次执行过程，或是正在运行的一个程序。是一个动态的过程。它有自身产生，存在，消亡的过程——————生命周期，进程是系统资源分配的最小单位。</p>
 <p>线程：进程可进一步细化为线程，是一个程序内部的执行路径，线程作为调度和执行的最小单位，每个线程拥有独立的运行栈和程序计数器 PC，线程的切换开销小。</p>
           <!--noindex-->
@@ -1020,117 +1139,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://ccxblog.gitee.io/2020/10/31/Java%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%951/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/aa.jpg">
-      <meta itemprop="name" content="Chen Chang Xi">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XixiBlog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/10/31/Java%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%951/" class="post-title-link" itemprop="url">Java基础(1)</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-10-31 10:25:46" itemprop="dateCreated datePublished" datetime="2020-10-31T10:25:46+08:00">2020-10-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-12 20:19:14" itemprop="dateModified" datetime="2020-11-12T20:19:14+08:00">2020-11-12</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index"><span itemprop="name">java</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <meta name="referrer" content="no-referrer"/>
-
-
-<h2 id="注释"><a href="#注释" class="headerlink" title="注释"></a>注释</h2><p>Java中有三种注释</p>
-<ul>
-<li><p>单行注释 : <code>// </code>注释一行文字</p>
-<pre class="line-numbers language-none"><code class="language-none">public class Helloworld &#123;
-    public static void main(String[] args)&#123;
-        &#x2F;&#x2F; 单行注释
-        &#x2F;&#x2F; 输出一个Hello World
-        System.out.println(&quot;hello world&quot;);
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-</li>
-</ul>
-<ul>
-<li><p>多行注释 ： <code>/*  </code>开始然后中间一段文本 <code>*/</code>结束</p>
-<pre class="line-numbers language-none"><code class="language-none">public class Helloworld &#123;
-    public static void main(String[] args)&#123;
-        &#x2F;* 注释
-           注释
-           注释
-           注释
-        *&#x2F;
-        System.out.println(&quot;hello world&quot;);
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/10/31/Java%E5%9F%BA%E7%A1%80%E8%AF%AD%E6%B3%951/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1202,7 +1210,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
