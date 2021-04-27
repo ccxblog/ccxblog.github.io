@@ -33,7 +33,7 @@
 <meta property="og:image" content="https://i.bmp.ovh/imgs/2020/12/c6db2b922a7f0ce8.png">
 <meta property="og:image" content="https://i.bmp.ovh/imgs/2020/12/e5791f131e15b29c.png">
 <meta property="article:published_time" content="2020-12-03T08:51:18.000Z">
-<meta property="article:modified_time" content="2021-04-09T13:28:20.902Z">
+<meta property="article:modified_time" content="2021-04-10T13:52:11.283Z">
 <meta property="article:author" content="Chen Chang Xi">
 <meta property="article:tag" content="MYSQL">
 <meta name="twitter:card" content="summary">
@@ -197,7 +197,7 @@
                   <i class="fa fa-calendar-check-o"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-09 21:28:20" itemprop="dateModified" datetime="2021-04-09T21:28:20+08:00">2021-04-09</time>
+                <time title="修改时间：2021-04-10 21:52:11" itemprop="dateModified" datetime="2021-04-10T21:52:11+08:00">2021-04-10</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -221,7 +221,6 @@
 
       
         <meta name="referrer" content="no-referrer" />
-
 
 <h2 id="事务"><a href="#事务" class="headerlink" title="事务"></a>事务</h2><ul>
 <li>什么是事务：要么都成功，要么都失败</li>
@@ -255,12 +254,20 @@
 <p>事务一旦提交就不可逆转，被持久化到数据库</p>
 <ul>
 <li>隔离所导致的问题<ul>
-<li>脏读：指一个事务读取了另一个未提交的数据</li>
-<li>不可重复读：在一个事务内读取表中的某一行数据，多次读取结果不同。（这个不一定是错误，只是某些场合不对）</li>
-<li>虚读（幻读）：是指在一个事务内读取到了别的事务插入的数据，导致前后读取不一致。<br>（一般是行影响，多了一行）</li>
+<li>脏读：指一个事务读取了另一个未提交的数据 , 对于两个事务 a ，b , a读取到了b已经更新但未提交的数据，若之后 b 发生了回滚 ，则 a 读到的就是临时且无效的数据。</li>
+<li>不可重复读：在一个事务内读取表中的某一行数据，多次读取结果不同。 对于两个事务 a ，b, a读取了一个字段，然后 b 对改字段进行了<strong>更新</strong>，之后 a 再读该字段的时候发现值不一样了（这个不一定是错误，只是某些场合不对）</li>
+<li>虚读（幻读）：是指在一个事务内读取到了别的事务插入的数据，导致前后读取不一致。 对于两个事务 a ，b。 a从表中读取了一个字段，然后 b 在该表中<strong>插入</strong>了新的行。之后 a 再次读取同一个表，就会多出几行。<br>（一般是行影响，多了一行）</li>
 </ul>
 </li>
 </ul>
+<p>幻读 和 不可重复读 ： 幻读是插入导致的 ， 不可重复读是 更新导致的。</p>
+<h2 id="事务的隔离级别"><a href="#事务的隔离级别" class="headerlink" title="事务的隔离级别"></a>事务的隔离级别</h2><ul>
+<li>读未提交：允许事务读取未提交的数据。会产生 脏读 ， 不可重复读 ， 幻读的问题。</li>
+<li>读已提交：只允许事务读取已经提交的数据，解决了脏读的问题，但不可重复读和幻读问题还是有。</li>
+<li>可重复读：确保事务可以多次读取到相同的值，在这个事务持序期间，禁止其它事务，对这个字段进行更新。可以避免 脏读 和 不可重复读 ，但幻读问题依然存在。</li>
+<li>串行化：确保事务可以多次从一个表中读取相同的行，在这个事务持序期间，禁止其他事务对该表进行插入，更新和删除操作，所以并发问题都可以避免，但性能十分低下。</li>
+</ul>
+<p>从上到下 ，越往下 安全性，一致性 越好 但并发性越差</p>
 <h2 id="执行事务"><a href="#执行事务" class="headerlink" title="执行事务"></a>执行事务</h2><p>mysql是默认开启事务自动提交的</p>
 <pre class="line-numbers language-sql" data-language="sql"><code class="language-sql"> <span class="token keyword">set</span> autocommit <span class="token operator">=</span> <span class="token number">0</span> <span class="token comment">-- 关闭</span>
  <span class="token keyword">set</span> autocommit <span class="token operator">=</span> <span class="token number">1</span> <span class="token comment">-- 开启（默认的）</span>
@@ -769,7 +776,7 @@ password <span class="token operator">=</span> <span class="token number">123456
         <span class="token function">update</span><span class="token punctuation">(</span>sql <span class="token punctuation">,</span> <span class="token number">19</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
     <span class="token punctuation">&#125;</span>
 
-    <span class="token comment">// 通用 更新</span>
+    <span class="token comment">// 通用 更新 -- 不考虑事务</span>
     <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">update</span><span class="token punctuation">(</span><span class="token class-name">String</span> sql <span class="token punctuation">,</span> <span class="token class-name">Object</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span>args<span class="token punctuation">)</span>  <span class="token punctuation">&#123;</span>
 
         <span class="token class-name">Connection</span> connection <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
@@ -793,6 +800,64 @@ password <span class="token operator">=</span> <span class="token number">123456
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span>
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="使用-PrepareStatement-实现考虑事务的更新操作"><a href="#使用-PrepareStatement-实现考虑事务的更新操作" class="headerlink" title="使用 PrepareStatement 实现考虑事务的更新操作"></a>使用 PrepareStatement 实现考虑事务的更新操作</h2><p>在 Mysql 中那些操作会导致事务自动提交？</p>
+<ul>
+<li>DDL 操作一旦执行就会自动提交</li>
+<li>DML 默认情况下是自动提交 ， 可以 set autocommit = false 关闭自动提交</li>
+<li>默认在关闭连接的时候也会自动提交事务</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token annotation punctuation">@Test</span>
+   <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">test2</span><span class="token punctuation">(</span><span class="token punctuation">)</span>  <span class="token punctuation">&#123;</span>
+       <span class="token comment">// 模拟 aa 给 bb 转账</span>
+       <span class="token class-name">Connection</span> connection <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+       <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
+           connection <span class="token operator">=</span> <span class="token class-name">JDBCUtils</span><span class="token punctuation">.</span><span class="token function">getConnection</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+           <span class="token comment">// 关闭事务自动提交</span>
+           connection<span class="token punctuation">.</span><span class="token function">setAutoCommit</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+           <span class="token class-name">String</span> sql1 <span class="token operator">=</span> <span class="token string">"update user_table set balance = balance - 100 where user = ?"</span><span class="token punctuation">;</span>
+           <span class="token function">update</span><span class="token punctuation">(</span>connection<span class="token punctuation">,</span> sql1<span class="token punctuation">,</span> <span class="token string">"AA"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+           <span class="token comment">// 模拟异常</span>
+           <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span><span class="token number">10</span><span class="token operator">/</span><span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+           <span class="token class-name">String</span> sql2 <span class="token operator">=</span> <span class="token string">"update user_table set balance = balance + 100 where user = ?"</span><span class="token punctuation">;</span>
+
+           <span class="token function">update</span><span class="token punctuation">(</span>connection<span class="token punctuation">,</span> sql2<span class="token punctuation">,</span> <span class="token string">"BB"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+           connection<span class="token punctuation">.</span><span class="token function">commit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment">// 提交事务</span>
+       <span class="token punctuation">&#125;</span><span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">Exception</span> e<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+           e<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+           <span class="token keyword">try</span> <span class="token punctuation">&#123;</span>
+               connection<span class="token punctuation">.</span><span class="token function">rollback</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+           <span class="token punctuation">&#125;</span> <span class="token keyword">catch</span> <span class="token punctuation">(</span><span class="token class-name">SQLException</span> ex<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+               ex<span class="token punctuation">.</span><span class="token function">printStackTrace</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+           <span class="token punctuation">&#125;</span>
+       <span class="token punctuation">&#125;</span><span class="token keyword">finally</span> <span class="token punctuation">&#123;</span>
+           <span class="token class-name">JDBCUtils</span><span class="token punctuation">.</span><span class="token function">release</span><span class="token punctuation">(</span>connection <span class="token punctuation">,</span> <span class="token keyword">null</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token punctuation">&#125;</span>
+
+   <span class="token punctuation">&#125;</span>
+
+
+   <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">update</span><span class="token punctuation">(</span><span class="token class-name">Connection</span> connection <span class="token punctuation">,</span> <span class="token class-name">String</span> sql <span class="token punctuation">,</span> <span class="token class-name">Object</span><span class="token punctuation">.</span><span class="token punctuation">.</span><span class="token punctuation">.</span> args<span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span> <span class="token punctuation">&#123;</span>
+
+       <span class="token class-name">PreparedStatement</span> ps <span class="token operator">=</span> <span class="token keyword">null</span><span class="token punctuation">;</span>
+
+       ps <span class="token operator">=</span> connection<span class="token punctuation">.</span><span class="token function">prepareStatement</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">0</span> <span class="token punctuation">;</span> i <span class="token operator">&lt;</span> args<span class="token punctuation">.</span>length <span class="token punctuation">;</span> i <span class="token operator">++</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+           ps<span class="token punctuation">.</span><span class="token function">setObject</span><span class="token punctuation">(</span>i <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">,</span> args<span class="token punctuation">[</span>i<span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+       <span class="token punctuation">&#125;</span>
+       ps<span class="token punctuation">.</span><span class="token function">execute</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+       <span class="token class-name">JDBCUtils</span><span class="token punctuation">.</span><span class="token function">release</span><span class="token punctuation">(</span><span class="token keyword">null</span> <span class="token punctuation">,</span> ps<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+   <span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
 
 
 
@@ -870,6 +935,47 @@ password <span class="token operator">=</span> <span class="token number">123456
     <span class="token punctuation">&#125;</span>
 <span class="token punctuation">&#125;</span>
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h2 id="使用PerparedStatement高效批量插入"><a href="#使用PerparedStatement高效批量插入" class="headerlink" title="使用PerparedStatement高效批量插入"></a>使用PerparedStatement高效批量插入</h2><pre class="line-numbers language-java" data-language="java"><code class="language-java">
+<span class="token comment">/**
+ * mysql 默认单次插入的数据大小为 1M ，
+ * 需要在 my.ini 配置文件加上 max_allowed_packet=16M 提高单次操作的大小
+ * mysql 是默认关闭 批处理的，需要我们手动开启批处理的支持，
+ * 在 url 后面加上 ?rewriteBatchedStatements = true
+ */</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">MoreInsert</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token annotation punctuation">@Test</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">insert</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token keyword">throws</span> <span class="token class-name">SQLException</span><span class="token punctuation">,</span> <span class="token class-name">IOException</span><span class="token punctuation">,</span> <span class="token class-name">ClassNotFoundException</span> <span class="token punctuation">&#123;</span>
+
+        <span class="token class-name">Connection</span> connection <span class="token operator">=</span> <span class="token class-name">JDBCUtils</span><span class="token punctuation">.</span><span class="token function">getConnection</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token class-name">String</span> sql <span class="token operator">=</span> <span class="token string">"insert into tem (id) values(?)"</span><span class="token punctuation">;</span>
+        <span class="token class-name">PreparedStatement</span> ps <span class="token operator">=</span> connection<span class="token punctuation">.</span><span class="token function">prepareStatement</span><span class="token punctuation">(</span>sql<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        connection<span class="token punctuation">.</span><span class="token function">setAutoCommit</span><span class="token punctuation">(</span><span class="token boolean">false</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token keyword">for</span> <span class="token punctuation">(</span><span class="token keyword">int</span> i <span class="token operator">=</span> <span class="token number">1</span> <span class="token punctuation">;</span> i <span class="token operator">&lt;=</span> <span class="token number">20000</span> <span class="token punctuation">;</span> i <span class="token operator">++</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+            ps<span class="token punctuation">.</span><span class="token function">setObject</span><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">,</span> <span class="token string">"name"</span> <span class="token operator">+</span> i<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            ps<span class="token punctuation">.</span><span class="token function">addBatch</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+            <span class="token keyword">if</span><span class="token punctuation">(</span>i <span class="token operator">%</span> <span class="token number">10</span> <span class="token operator">==</span> <span class="token number">0</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+                ps<span class="token punctuation">.</span><span class="token function">executeBatch</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+                ps<span class="token punctuation">.</span><span class="token function">clearBatch</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+            <span class="token punctuation">&#125;</span>
+        <span class="token punctuation">&#125;</span>
+
+        connection<span class="token punctuation">.</span><span class="token function">commit</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+        <span class="token class-name">JDBCUtils</span><span class="token punctuation">.</span><span class="token function">release</span><span class="token punctuation">(</span>connection <span class="token punctuation">,</span> ps<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
 
 
     </div>
@@ -956,7 +1062,7 @@ password <span class="token operator">=</span> <span class="token number">123456
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E4%BA%8B%E5%8A%A1"><span class="nav-number">2.</span> <span class="nav-text">执行事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">3.</span> <span class="nav-text">索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">3.1.</span> <span class="nav-text">索引的分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%B4%A2%E5%BC%95"><span class="nav-number">3.2.</span> <span class="nav-text">测试索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%8E%9F%E5%88%99"><span class="nav-number">3.3.</span> <span class="nav-text">索引原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">3.4.</span> <span class="nav-text">索引的数据结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E4%B8%8E%E5%A4%87%E4%BB%BD"><span class="nav-number">4.</span> <span class="nav-text">权限管理与备份</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86"><span class="nav-number">4.1.</span> <span class="nav-text">用户管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mysql-%E5%A4%87%E4%BB%BD"><span class="nav-number">4.2.</span> <span class="nav-text">Mysql 备份</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%84%E8%8C%83%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1"><span class="nav-number">5.</span> <span class="nav-text">规范数据库设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%AE%BE%E8%AE%A1"><span class="nav-number">5.1.</span> <span class="nav-text">为什么需要设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%A4%A7%E8%8C%83%E5%BC%8F"><span class="nav-number">5.2.</span> <span class="nav-text">三大范式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E8%8C%83%E5%BC%8F%EF%BC%881NF%EF%BC%89"><span class="nav-number">5.3.</span> <span class="nav-text">第一范式（1NF）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E8%8C%83%E5%BC%8F%EF%BC%882NF%EF%BC%89"><span class="nav-number">5.4.</span> <span class="nav-text">第二范式（2NF）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E8%8C%83%E5%BC%8F"><span class="nav-number">5.5.</span> <span class="nav-text">第三范式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%84%E8%8C%83%E6%80%A7%E8%B7%9F%E6%80%A7%E8%83%BD"><span class="nav-number">5.6.</span> <span class="nav-text">规范性跟性能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JDBC"><span class="nav-number">6.</span> <span class="nav-text">JDBC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E9%A9%B1%E5%8A%A8"><span class="nav-number">6.1.</span> <span class="nav-text">数据库驱动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AAJDBC"><span class="nav-number">6.2.</span> <span class="nav-text">第一个JDBC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDBC%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">6.3.</span> <span class="nav-text">JDBC基本使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98"><span class="nav-number">6.4.</span> <span class="nav-text">SQL 注入问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PreparedStatement%E5%AF%B9%E8%B1%A1"><span class="nav-number">6.5.</span> <span class="nav-text">PreparedStatement对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JDBC-%E7%9A%84%E5%B0%81%E8%A3%85"><span class="nav-number">7.</span> <span class="nav-text">JDBC 的封装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-PrepareStatement-%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E6%9B%B4%E6%96%B0%E6%93%8D%E4%BD%9C"><span class="nav-number">8.</span> <span class="nav-text">使用 PrepareStatement 实现通用更新操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-PrepareStatement-%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E6%9F%A5%E8%AF%A2%E6%93%8D%E4%BD%9C"><span class="nav-number">9.</span> <span class="nav-text">使用 PrepareStatement 实现通用查询操作</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1"><span class="nav-number">1.</span> <span class="nav-text">事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8B%E5%8A%A1%E7%9A%84%E9%9A%94%E7%A6%BB%E7%BA%A7%E5%88%AB"><span class="nav-number">2.</span> <span class="nav-text">事务的隔离级别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E4%BA%8B%E5%8A%A1"><span class="nav-number">3.</span> <span class="nav-text">执行事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95"><span class="nav-number">4.</span> <span class="nav-text">索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E5%88%86%E7%B1%BB"><span class="nav-number">4.1.</span> <span class="nav-text">索引的分类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95%E7%B4%A2%E5%BC%95"><span class="nav-number">4.2.</span> <span class="nav-text">测试索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E5%8E%9F%E5%88%99"><span class="nav-number">4.3.</span> <span class="nav-text">索引原则</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%B4%A2%E5%BC%95%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84"><span class="nav-number">4.4.</span> <span class="nav-text">索引的数据结构</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9D%83%E9%99%90%E7%AE%A1%E7%90%86%E4%B8%8E%E5%A4%87%E4%BB%BD"><span class="nav-number">5.</span> <span class="nav-text">权限管理与备份</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%94%A8%E6%88%B7%E7%AE%A1%E7%90%86"><span class="nav-number">5.1.</span> <span class="nav-text">用户管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Mysql-%E5%A4%87%E4%BB%BD"><span class="nav-number">5.2.</span> <span class="nav-text">Mysql 备份</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A7%84%E8%8C%83%E6%95%B0%E6%8D%AE%E5%BA%93%E8%AE%BE%E8%AE%A1"><span class="nav-number">6.</span> <span class="nav-text">规范数据库设计</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E8%AE%BE%E8%AE%A1"><span class="nav-number">6.1.</span> <span class="nav-text">为什么需要设计</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E5%A4%A7%E8%8C%83%E5%BC%8F"><span class="nav-number">6.2.</span> <span class="nav-text">三大范式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E8%8C%83%E5%BC%8F%EF%BC%881NF%EF%BC%89"><span class="nav-number">6.3.</span> <span class="nav-text">第一范式（1NF）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E8%8C%83%E5%BC%8F%EF%BC%882NF%EF%BC%89"><span class="nav-number">6.4.</span> <span class="nav-text">第二范式（2NF）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%89%E8%8C%83%E5%BC%8F"><span class="nav-number">6.5.</span> <span class="nav-text">第三范式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%84%E8%8C%83%E6%80%A7%E8%B7%9F%E6%80%A7%E8%83%BD"><span class="nav-number">6.6.</span> <span class="nav-text">规范性跟性能</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JDBC"><span class="nav-number">7.</span> <span class="nav-text">JDBC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E9%A9%B1%E5%8A%A8"><span class="nav-number">7.1.</span> <span class="nav-text">数据库驱动</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E4%B8%AAJDBC"><span class="nav-number">7.2.</span> <span class="nav-text">第一个JDBC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JDBC%E5%9F%BA%E6%9C%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">7.3.</span> <span class="nav-text">JDBC基本使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SQL-%E6%B3%A8%E5%85%A5%E9%97%AE%E9%A2%98"><span class="nav-number">7.4.</span> <span class="nav-text">SQL 注入问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PreparedStatement%E5%AF%B9%E8%B1%A1"><span class="nav-number">7.5.</span> <span class="nav-text">PreparedStatement对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#JDBC-%E7%9A%84%E5%B0%81%E8%A3%85"><span class="nav-number">8.</span> <span class="nav-text">JDBC 的封装</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-PrepareStatement-%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E6%9B%B4%E6%96%B0%E6%93%8D%E4%BD%9C"><span class="nav-number">9.</span> <span class="nav-text">使用 PrepareStatement 实现通用更新操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-PrepareStatement-%E5%AE%9E%E7%8E%B0%E8%80%83%E8%99%91%E4%BA%8B%E5%8A%A1%E7%9A%84%E6%9B%B4%E6%96%B0%E6%93%8D%E4%BD%9C"><span class="nav-number">10.</span> <span class="nav-text">使用 PrepareStatement 实现考虑事务的更新操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8-PrepareStatement-%E5%AE%9E%E7%8E%B0%E9%80%9A%E7%94%A8%E6%9F%A5%E8%AF%A2%E6%93%8D%E4%BD%9C"><span class="nav-number">11.</span> <span class="nav-text">使用 PrepareStatement 实现通用查询操作</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8PerparedStatement%E9%AB%98%E6%95%88%E6%89%B9%E9%87%8F%E6%8F%92%E5%85%A5"><span class="nav-number">12.</span> <span class="nav-text">使用PerparedStatement高效批量插入</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -972,20 +1078,20 @@ password <span class="token operator">=</span> <span class="token number">123456
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-count">16</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">6</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
