@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ccxblog.gitee.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="## JVM基本概念   JVM 的 位置  JVM 是 运行在操作系统之上的 ， 它与硬件没有直接交互。   JVM 体系结构概览">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM">
+<meta property="og:url" content="https://ccxblog.gitee.io/2021/06/22/JVM/index.html">
+<meta property="og:site_name" content="XixiBlog">
+<meta property="og:description" content="## JVM基本概念   JVM 的 位置  JVM 是 运行在操作系统之上的 ， 它与硬件没有直接交互。   JVM 体系结构概览">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/06/117921e7da70ffeb.png">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/06/f8feb8e4ecb13b02.png">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/06/9c805483ce52d033.png">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/06/fd500c5d22bd1157.png">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/06/ba1b76be049236d8.png">
+<meta property="og:image" content="https://ftp.bmp.ovh/imgs/2021/06/daac51335f273a7d.png">
+<meta property="og:image" content="https://i.bmp.ovh/imgs/2021/06/41255f9d9ac627ef.png">
+<meta property="og:image" content="https://i.bmp.ovh/imgs/2021/06/46190c02e7bf7c32.png">
+<meta property="article:published_time" content="2021-06-22T03:14:05.000Z">
+<meta property="article:modified_time" content="2021-06-22T12:03:38.505Z">
+<meta property="article:author" content="Chen Chang Xi">
+<meta property="article:tag" content="java基础">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://ftp.bmp.ovh/imgs/2021/06/117921e7da70ffeb.png">
+
+<link rel="canonical" href="https://ccxblog.gitee.io/2021/06/22/JVM/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>JVM | XixiBlog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XixiBlog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ccxblog.gitee.io/2021/06/22/JVM/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/aa.jpg">
+      <meta itemprop="name" content="Chen Chang Xi">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XixiBlog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          JVM
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-06-22 11:14:05 / 修改时间：20:03:38" itemprop="dateCreated datePublished" datetime="2021-06-22T11:14:05+08:00">2021-06-22</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/jVM/" itemprop="url" rel="index"><span itemprop="name">jVM</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <meta name="referrer" content="no-referrer" />
+## JVM基本概念
+
+<ul>
+<li>JVM 的 位置</li>
+</ul>
+<p>JVM 是 运行在操作系统之上的 ， 它与硬件没有直接交互。</p>
+<p><img src="https://ftp.bmp.ovh/imgs/2021/06/117921e7da70ffeb.png"></p>
+<ul>
+<li>JVM 体系结构概览</li>
+</ul>
+<p><strong><img src="https://ftp.bmp.ovh/imgs/2021/06/f8feb8e4ecb13b02.png"></strong></p>
+<a id="more"></a>
+
+<h3 id="一丶类装载器-ClassLoader"><a href="#一丶类装载器-ClassLoader" class="headerlink" title="一丶类装载器 ClassLoader"></a>一丶类装载器 ClassLoader</h3><p>​        负责加载class文件，class文件 <strong>在文件开头有特定的文件标识</strong> ，将class文件字节码内容加载到内存中，并将这些内容转换成方法区(不是存方法的地方，是放类的模板信息)中的运行时数据结构并且ClassLoader只负责class文件的加载，至于它是否可以运行，则由Execution Engine（执行引擎）决定。 </p>
+<p><img src="https://ftp.bmp.ovh/imgs/2021/06/9c805483ce52d033.png"></p>
+<ul>
+<li><p>类加载器的种类</p>
+<ul>
+<li><p>虚拟机自带的加载器</p>
+<ol>
+<li>启动类加载器 （BootStrap）：由 C ++ 编写 ， 程序中自带的类存储在$JAVAHOME/jre/lib/rt.jar中，如object类等 , 是获取不到的。</li>
+<li>扩展类加载器（Extension) ： Java 编写 , 加载javax 开头的，凡是以javax 开头的，都是拓展包，存储在$JAVAHOME/jre/lib/ext/*.jar 中。</li>
+<li>应用程序类加载器（AppClassLoader）：即平时程序中自定义的类 ， new 出来的。</li>
+</ol>
+</li>
+<li><p>用户自定义类加载器</p>
+<p>​        Java.lang.ClassLoader的子类，用户可以定制类的加载方式，即如果你的程序有特殊的需求，你也可以自定义你的类加载器的加载方式 ，进入ClassLoader的源码，其为抽象类，<br>因此在你定制化开发的时候，需要你定义自己的加载器类来继承ClassLoader抽象类即可，即 MyClassLoader extends ClassLoader</p>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://ftp.bmp.ovh/imgs/2021/06/fd500c5d22bd1157.png"></p>
+ <pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">com<span class="token punctuation">.</span>company</span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Main</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">static</span> <span class="token keyword">void</span> <span class="token function">main</span><span class="token punctuation">(</span><span class="token class-name">String</span><span class="token punctuation">[</span><span class="token punctuation">]</span> args<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+	    <span class="token class-name">Object</span> object <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Object</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+	    <span class="token comment">// 启动类加载器 null</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>object<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+
+        <span class="token class-name">Main</span> main <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Main</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// appClassLoader</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>main<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// ExtClassLoader 扩展类加载器</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>main<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getParent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">// 启动类加载器 null</span>
+        <span class="token class-name">System</span><span class="token punctuation">.</span>out<span class="token punctuation">.</span><span class="token function">println</span><span class="token punctuation">(</span>main<span class="token punctuation">.</span><span class="token function">getClass</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getClassLoader</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getParent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">getParent</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<ul>
+<li>双亲委派机制</li>
+</ul>
+<p>小口诀 ： 我爸是李刚 ， 有事找我爹。类加载的时候 ， 先去 启动类加载器找 ，如果启动类加载器找不到 ，就去扩展类加载器找 ， 如果扩展类加载器找不到 ， 再到 应用程序类加载器，此时找不到就会报classNotFund Exception的异常。</p>
+<p>概念：<br>        当一个类收到类加载请求，它首先不会尝试自己去加载这个类，而是先把这个请求委派给父类去完成，每一个层次类加载器都是如此，因此所有的类加载请求都是应该传到启动类加载器中的，只有当其父类加载器自己无法完成这个请求的时候（在他的加载路径下没有找到所需加载的Class）,子类加载器才会尝试自己去加载。<br>        采用双亲委派的一个好处就是比如加载位于rt.jar包中的类java.lang.Object，不管是哪个加载器加载这个类，最终都是会委托给顶层的启动类加载器进行加载，这样就保证了使用不同的类加载器最终得到的都是同一个Object对象。</p>
+<ul>
+<li><p>沙箱安全</p>
+<p>​    通过双亲委派机制，类的加载永远都是从 启动类加载器开始，依次下放，保证你所写的代码，不会污染Java自带的源代码，所以出现了双亲委派机制，保证了沙箱安全</p>
+</li>
+</ul>
+<h3 id="JVM-本地方法接口-和-本地方法栈"><a href="#JVM-本地方法接口-和-本地方法栈" class="headerlink" title="JVM 本地方法接口 和 本地方法栈"></a>JVM 本地方法接口 和 本地方法栈</h3><p>java中含有许多 用 Native 修饰的方法 ， 这些方法的具体实现是 c/c++ 实现的 ， java可以调用这些方法，并为这些方法定制了 本地方法栈（Native Method Stack）。它的具体做法是 Native Method Stack 中登记 native 方法 ， 在 Execution Engine （执行引擎）执行的时候加载 native libraies。</p>
+<h3 id="程序计数器-PC"><a href="#程序计数器-PC" class="headerlink" title="程序计数器 PC"></a>程序计数器 PC</h3><p>​        用来存储指向下一条指令的地址，也即将要执行的指令代码。每个线程都有一个程序计数器，是线程私有的，就是一个指针，指向方法区中的方法字节码（用来存储指向下一条指令的地址，也即将要执行的指令代码。<br>其实不光有pc,还有时间片的轮转，这里不多做介绍），有执行引擎读取下一条指令，是一个非常小的内存空间，几乎可以忽略不计。 如果执行的是一个Native方法，那这个计数器就是空的，因为native已经不属于Java的范畴了 。</p>
+<h3 id="方法区"><a href="#方法区" class="headerlink" title="方法区"></a>方法区</h3><p>​        供各线程 共享 的运行时内存区域。<strong>存储了每一个类的结构信息</strong>（类加载器加载后装载到方法区，包涵一个类由几个构造方法，几个属性。。。 ）。例如：运行时常量池（Runtime Constant Pool）、字段 和 方法数据、构造函数和普通方法的字节码内容。</p>
+<p>​        方法区就是一个规范，在不同的虚拟机里实现是不一样的，最典型的就是 永久代（PermGen space） 和 元空间 （Metaspace）<br>永久代：JDK1.7<br>元空间：JDK1.8<br>但是两者都不存在方法区中，就像上面所讲，方法区存的是模板，而永久代和元空间是这套模板的实例，后面在堆中讨论<br>所以，实例变量存储在堆内存中，和方法区无关。</p>
+<h3 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h3><p>栈管运行 ， 堆管存储。Java栈是线程私有的。  也叫内存，主管Java程序的运行，是在线程创建时创建，他的生命周期是跟随线程的生命周期，线程结束那么栈内存也就随之释放， 对于栈来说不存在垃圾回收问题 ，只要线程已结束该栈就over了，是线程私有的。8种基本类型的变量 + 对象的引用变量 + 实例方法都是在函数的栈内存中分配。</p>
+<p>栈存储什么？<br>栈帧中主要保存 3 类数据 ： （栈帧：即Java中的方法，只是在jvm中叫做栈帧）</p>
+<ul>
+<li>① 本地变量 （Local Variables） : 入参和出参 以及方法内的变量；</li>
+<li>② 栈操作 （Operand Stack） : 记录出栈 和 入栈的操作；（可理解为pc寄存器的指针）</li>
+<li>③ 栈帧数据 （Frame Data） : 包括类文件、方法等。</li>
+</ul>
+<ul>
+<li>栈 ， 堆 ， 方法区的关系</li>
+</ul>
+<p><img src="https://ftp.bmp.ovh/imgs/2021/06/ba1b76be049236d8.png"></p>
+<p>HotSpot是使用指针的方式来访问对象 ：<br>Java堆中存放访问类元数据的地址（即模板的地址）<br>reference存储的是直接对象的地址</p>
+<h3 id="堆"><a href="#堆" class="headerlink" title="堆"></a>堆</h3><p>一个 JVM 存在一个堆内存 ， 堆的内存大小可以调节。类加载器读取了类文件后，需要把类，方法，常变量放到堆内存中，保存所有引用类型的真实信息，以方便执行器执行，堆内存<strong>逻辑</strong>分为 三 部分：</p>
+<ol>
+<li>新生代 ： 1/3 的堆空间<ul>
+<li>伊甸区 ：8/10 的新生代空间</li>
+<li>幸存0区 : 1/10 的新生代空间</li>
+<li>幸存1区 ：1/10 的新生代空间</li>
+</ul>
+</li>
+<li>老年代 ： 2/3 的堆空间</li>
+<li>永久代（1.8 改叫元空间）</li>
+</ol>
+<p>物理上**新生 加 养老 **组成</p>
+<p><img src="https://ftp.bmp.ovh/imgs/2021/06/daac51335f273a7d.png"></p>
+<p>​        新生区是类诞生，成长，消亡的地方，一个类在这里产生，所有类都是在伊甸园区被 new 出来的。当伊甸园区的空间被用完后程序又创建对象，这时 JVM 的垃圾回收器将对伊甸园区进行垃圾回收（轻GC）,将伊甸园区中不再被其它对象引用的对象进行销毁。然后把剩余的对象移到幸存者区，以此类推，最后会移动到养老区。若养老区也满了，这时会产生（重GC) , 进行养老区的内存清理。若清理后还无法进行对象的保存，就会产生OOM异常。</p>
+<ul>
+<li><p>轻GC过程：复制 -&gt; 清空 -&gt; 交换</p>
+<pre><code>      每次回收都会清空 伊甸园区 ， 然后把存活的对象放到 幸存者区， 如果幸存者区也有对象，则对伊甸园区和幸存者区都进行垃圾回收，因为伊甸园区是要清空的，而为了减少内存碎片，所以有两个幸存者区，再幸存者区的清空流程是，先把存活后的对象复制到另外一个幸存者区（如果有对象的年龄以及到达了老年的标准默认是 15 岁，则复制到老年代）同时把存活的对象年龄加 1，再把当前幸存者区的对象清空，最后有对象的幸存者区成为当前幸存者区，即开2个幸存者区的作用是防止内存碎片。</code></pre>
+</li>
+</ul>
+<ul>
+<li>永久代 and 元空间</li>
+</ul>
+<p>它们都是方法区的的一种实现 ， 方法区（Method Area）是jvm规范里面的运行时数据区的一个组成部分主要用来存储class、运行时常量池、字段、方法、代码、JIT代码等。</p>
+<p>1.7叫永久区</p>
+<p>1.8改名叫元空间</p>
+<p>元空间与永久代之间最大的区别在于：元空间并不在虚拟机中，而是使用本地内存。因此，默认情况下，元空间的大小仅受本地内存限制</p>
+<h3 id="堆参数调整"><a href="#堆参数调整" class="headerlink" title="堆参数调整"></a>堆参数调整</h3><ul>
+<li>-Xms ： 设置初始分配大小 ， 默认为物理内存的 1/ 64。</li>
+<li>-Xmx : 最大分配内存 ， 默认为物理内存的 1 / 4。</li>
+<li>-XX + PrintGCDetails ：输出最详细的GC处理日志。</li>
+</ul>
+<p>我们可以再 IDEA 中点击 Run 菜单然后选择 Edit Configuration在打开的对话框中进行配置</p>
+<p><img src="https://i.bmp.ovh/imgs/2021/06/41255f9d9ac627ef.png"></p>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token operator">-</span><span class="token class-name">Xms1024m</span> <span class="token operator">-</span><span class="token class-name">Xmx1024m</span> <span class="token operator">-</span>XX<span class="token operator">:</span><span class="token operator">+</span><span class="token class-name">PrintGCDetails</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<h3 id="GC"><a href="#GC" class="headerlink" title="GC"></a>GC</h3><p>​        JVM 在进行 Gc 的时候并非每次都是对 3 个 区域一起回收的 ， 大部分时候回收的都是指新生代。因此 GC 按照回收的区域又分为两种类型，一种是普通 GC ， 一种是全局 GC (FUll GC)。全局GC要比 普通GC 慢 10 倍上，因为老年代的内存要比新生代的内存大，所以遍历起来也会慢。因此我们要尽量增加 在新生代的普通GC ， 减少老年代的全局GC(FULL GC)。</p>
+<ul>
+<li>GC 四大算法<ol>
+<li>引用计数法</li>
+<li>复制算法 ： 年轻代使用的是 Minor Gc 这种GC算法使用的是复制算法，避免内存碎片 ， 缺点浪费了一半内存碎片，如果对象的存活率高，复制花费的数据也会变长。</li>
+<li>标记清除 ： 老年代一般由标记清除和标记整理混合。标记清除算法分成标记和清除两个阶段，先标记出要回收的对象，然后再统一回收这些对象。解决的复制算法浪费空间的问题，但会产生内存碎片，而且需要两次扫描耗时严重。</li>
+<li>标记整理：清除后，往一端补齐，形成连续的空间。</li>
+</ol>
+</li>
+</ul>
+<h3 id="JAVA内存模型—-JMM"><a href="#JAVA内存模型—-JMM" class="headerlink" title="JAVA内存模型—-JMM"></a>JAVA内存模型—-JMM</h3><ol>
+<li><p>volatile是 java 虚拟机提供的同步机制它能保证 可见性 ， 禁止指令重排即保证有序性，但不保证原子性。</p>
+</li>
+<li><p>Jmm特性：</p>
+<ol>
+<li>原子性</li>
+<li>可见性</li>
+<li>有序性</li>
+</ol>
+</li>
+</ol>
+<p>​        由于JVM运行程序的实体是线程，而每个线程创建时JVM都会为其创建一个工作内存(有些地方称为栈空间)，工作内存是每个线程的私有数据区域，而Java内存模型中规定所有变量都存储在主内存，主内存是共享内存区域，所有线程都可以访问，但线程对变量的操作(读取赋值等)必须在工作内存中进行，首先要将变量从主内存拷贝到的线程自己的工作内存空间，然后对变量进行操作，操作完成后再将变量写回主内存，不能直接操作主内存中的变量，各个线程中的工作内存中存储着主内存中的变量副本拷贝，因此不同的线程间无法访问对方的工作内存，线程间的通信(传值)必须通过主内存来完成，其简要访问过程如下图:</p>
+<p><img src="https://i.bmp.ovh/imgs/2021/06/46190c02e7bf7c32.png"></p>
+
+    </div>
+
+    
+    
+    
+      
+   
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java%E5%9F%BA%E7%A1%80/" rel="tag"><i class="fa fa-tag"></i> java基础</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/06/21/Redis/" rel="prev" title="Redis">
+      <i class="fa fa-chevron-left"></i> Redis
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E4%B8%B6%E7%B1%BB%E8%A3%85%E8%BD%BD%E5%99%A8-ClassLoader"><span class="nav-number">1.</span> <span class="nav-text">一丶类装载器 ClassLoader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JVM-%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%8E%A5%E5%8F%A3-%E5%92%8C-%E6%9C%AC%E5%9C%B0%E6%96%B9%E6%B3%95%E6%A0%88"><span class="nav-number">2.</span> <span class="nav-text">JVM 本地方法接口 和 本地方法栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A8%8B%E5%BA%8F%E8%AE%A1%E6%95%B0%E5%99%A8-PC"><span class="nav-number">3.</span> <span class="nav-text">程序计数器 PC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95%E5%8C%BA"><span class="nav-number">4.</span> <span class="nav-text">方法区</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A0%88"><span class="nav-number">5.</span> <span class="nav-text">栈</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86"><span class="nav-number">6.</span> <span class="nav-text">堆</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86%E5%8F%82%E6%95%B0%E8%B0%83%E6%95%B4"><span class="nav-number">7.</span> <span class="nav-text">堆参数调整</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC"><span class="nav-number">8.</span> <span class="nav-text">GC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JAVA%E5%86%85%E5%AD%98%E6%A8%A1%E5%9E%8B%E2%80%94-JMM"><span class="nav-number">9.</span> <span class="nav-text">JAVA内存模型—-JMM</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Chang Xi"
+      src="/images/aa.jpg">
+  <p class="site-author-name" itemprop="name">Chen Chang Xi</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">22</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ccxblog" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ccxblog" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Chang Xi</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,0' opacity='0.4' zIndex='-1' count='120' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
