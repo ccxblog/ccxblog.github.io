@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"ccxblog.gitee.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="7款经典的垃圾回收器 串行回收器：Serial , Serial Old 并行回收器：ParNew , Parallel Scavenge ,Parallel Old 并发回收器：CMS , G1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java 7款垃圾回收器">
+<meta property="og:url" content="https://ccxblog.gitee.io/2021/08/17/JVM%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/index.html">
+<meta property="og:site_name" content="XixiBlog">
+<meta property="og:description" content="7款经典的垃圾回收器 串行回收器：Serial , Serial Old 并行回收器：ParNew , Parallel Scavenge ,Parallel Old 并发回收器：CMS , G1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.bmp.ovh/imgs/2021/08/abb2094741f37ac2.png">
+<meta property="article:published_time" content="2021-08-17T10:32:35.000Z">
+<meta property="article:modified_time" content="2021-08-30T13:26:55.051Z">
+<meta property="article:author" content="Chen Chang Xi">
+<meta property="article:tag" content="GC">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.bmp.ovh/imgs/2021/08/abb2094741f37ac2.png">
+
+<link rel="canonical" href="https://ccxblog.gitee.io/2021/08/17/JVM%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Java 7款垃圾回收器 | XixiBlog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">XixiBlog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ccxblog.gitee.io/2021/08/17/JVM%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/aa.jpg">
+      <meta itemprop="name" content="Chen Chang Xi">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XixiBlog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Java 7款垃圾回收器
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-08-17 18:32:35" itemprop="dateCreated datePublished" datetime="2021-08-17T18:32:35+08:00">2021-08-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-08-30 21:26:55" itemprop="dateModified" datetime="2021-08-30T21:26:55+08:00">2021-08-30</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/GC/" itemprop="url" rel="index"><span itemprop="name">GC</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <meta name="referrer" content="no-referrer" />
+
+
+
+<h3 id="7款经典的垃圾回收器"><a href="#7款经典的垃圾回收器" class="headerlink" title="7款经典的垃圾回收器"></a>7款经典的垃圾回收器</h3><ul>
+<li>串行回收器：Serial , Serial Old</li>
+<li>并行回收器：ParNew , Parallel Scavenge ,Parallel Old</li>
+<li>并发回收器：CMS , G1</li>
+</ul>
+<a id="more"></a>
+
+<h3 id="7款垃圾回收器与垃圾分代之间的关系"><a href="#7款垃圾回收器与垃圾分代之间的关系" class="headerlink" title="7款垃圾回收器与垃圾分代之间的关系"></a>7款垃圾回收器与垃圾分代之间的关系</h3><p>新生代垃圾回收器：Serial , ParNew , Parallel  Scavenge;</p>
+<p>老年代垃圾回收器：Serial Old , Parallel Old , CMS;</p>
+<p>整堆收集器：G1</p>
+<h3 id="垃圾收集器的组合关系"><a href="#垃圾收集器的组合关系" class="headerlink" title="垃圾收集器的组合关系"></a>垃圾收集器的组合关系</h3><p><img src="https://i.bmp.ovh/imgs/2021/08/abb2094741f37ac2.png"></p>
+<h3 id="Serial-回收器"><a href="#Serial-回收器" class="headerlink" title="Serial 回收器"></a>Serial 回收器</h3><ul>
+<li><p>Serial 回收器是最基本的垃圾收集器了，Serial采用复制算法，串行回收和 STW 机制的方式执行内存回收。</p>
+</li>
+<li><p>除了年轻代以外，Serial收集器还提供用于执行老年代的垃圾回收器 Serial Old收集器，其内存回收算法使用标记-压缩算法。</p>
+</li>
+</ul>
+<h3 id="ParNew-回收器"><a href="#ParNew-回收器" class="headerlink" title="ParNew 回收器"></a>ParNew 回收器</h3><ul>
+<li>如果说 Serial 是年轻代的单线程垃圾收集器，那么 ParNew 收集器则是 Serial 的多线程版本。</li>
+<li>ParNew 除了采用并行回收外，跟 Serial 垃圾回收器基本没任何区别。</li>
+<li>多 CPU 情况下 ParNew 可以发挥其优势，单 CPU 环境下 Serial 效率更高 ， 单 CPU 使用 ParNew 会频繁切换线程，造成不必要的线程开销。</li>
+</ul>
+<h3 id="Parallel-回收器"><a href="#Parallel-回收器" class="headerlink" title="Parallel 回收器"></a>Parallel 回收器</h3><ul>
+<li>Parallel 被称为吞吐量优先的垃圾回收器。</li>
+<li>Parallel Scavenge 收集器也是使用复制算法，并行回收和 STW 机制。</li>
+<li>在程序吞吐量优先的应用场景中， Parallel 收集器和 Parallel Old收集器的组合在Server模式下的内存回收性能很不错。</li>
+<li>在 Jdk8 中 Parallel作为默认垃圾回收器。</li>
+</ul>
+<h3 id="CMS-回收器"><a href="#CMS-回收器" class="headerlink" title="CMS 回收器"></a>CMS 回收器</h3><ul>
+<li><p>强交互型垃圾回收器 CMS（Concurrent Mark Sweep） 几乎可以认为是有划时代意义的垃圾回收器，这款回收器是 HotSpot 虚拟机中第一款真正意义上的<strong>并发收集器</strong>，它第一次实现了让垃圾收集线程和用户线程同时工作。</p>
+</li>
+<li><p>CMS 的关注点是尽可能的缩短垃圾回收时用户线程的停顿时间 ， 停顿时间越短就越适合与用户交互的程序。</p>
+</li>
+<li><p>CMS 的垃圾收集采用标记-清楚算法。</p>
+</li>
+<li><p>CMS 作为老年代垃圾收集器，却无法和 Parallel Scavenge 配合工作，所以 JDK1.5后使用 CMS 来收集老年代的时候，新生代只能选择ParNew 或者 Serial 中的一个。</p>
+</li>
+</ul>
+<p>CMS 垃圾回收分为 4 个阶段</p>
+<ol>
+<li>初始标记：在这个阶段，程序所以的工作都会因为 STW 机制短暂的暂停，这个阶段主要任务仅仅只是标记出GC ROOTs能直接关联到的对象。一旦标记完就回复之前暂停的应用线程。由于直接关联对象比较小，所以这里速度非常快。</li>
+<li>并发标记：从 GC ROOTs 的直接关联对象开始遍历，这个过程比较长但不用暂停用户线程。</li>
+<li>重新标记：由于并发标记阶段中，程序的工作线程会和垃圾回收器同时运行，因此要修正并发标记期间，因用户线程的运作而导致变动的那部分对象的标记记录。</li>
+<li>并发清楚：此阶段清理删除标记阶段判断的已经死亡的对象，释放内存空间。</li>
+</ol>
+<p>另外由于在垃圾回收阶段用户线程没中断，所以在 CMS 回收过程中，还应该确保应用程序用户线程有足够的内存使用，即当堆内存达到一定阈值的时候便开始进行回收了，要是预留内存无法满足程序需要则临时启用 Serial Old 收集器来重新进行老年代垃圾回收。</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>HotSpot 有那么多垃圾回收器，如果有人问 Serial GC , Parallel GC , CMS 这三个有什么不同呢？</p>
+<ol>
+<li>如果你想最小化地使用内存和并行开销，选 Serial</li>
+<li>想最大化应用程序吞吐量，选 Parallel GC</li>
+<li>想最小化 GC 的中断或停顿时间，选 CMS</li>
+</ol>
+<p>CMS 在 JDK14 被废弃了。</p>
+<h3 id="G1回收器"><a href="#G1回收器" class="headerlink" title="G1回收器"></a>G1回收器</h3><p>官方给 G1 设定的目标是在延迟可控的情况下获得尽可能高的吞吐量，所以才担起<strong>全功能收集器</strong>的重任与期望。</p>
+<ul>
+<li><p>G1是一个并行回收器，它把堆内存分割为很多不相干的区域（物理上不连续的），使用不同的区域来表示 Eden, 幸存者0区，幸存者1区，老年代等。</p>
+</li>
+<li><p>G1 有计划的避免在整个 Java 堆中进行全区域的垃圾收集。G1 跟踪个个区域里面的垃圾堆积的价值大小，在后台维护一个优先列表，每次根据运行的收集时间收集价值最大的区域。</p>
+</li>
+<li><p>在 JDK 7 正式使用， 在 JDK 9 默认使用</p>
+</li>
+</ul>
+<p>相对于 CMS , G1 还不具备全方位压倒性的优势。比如在用户程序运行过程中，G1无论是为了垃圾收集产生的内存占用还是程序运行时额外的负载都要必 CMS 高，从经验上来说，在小内存应用 CMS 大概率会由于 G1, 而  G1 在大内存应用上才好发货其优势。</p>
+<h3 id="G1-的垃圾回收过程"><a href="#G1-的垃圾回收过程" class="headerlink" title="G1 的垃圾回收过程"></a>G1 的垃圾回收过程</h3><p>G1 的垃圾回收过程主要包括如下 3 个环节</p>
+<ol>
+<li>年轻代 GC (Young GC)</li>
+<li>老年代并发标记过程</li>
+<li>混合回收</li>
+<li>如果需要，单线程，独占式，高强度的 Full GC还是继续存在的。它针对 Gc 的评估失败提供了一种保护机制，即强力回收。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+      
+   
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/GC/" rel="tag"><i class="fa fa-tag"></i> GC</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/07/12/netty/" rel="prev" title="netty">
+      <i class="fa fa-chevron-left"></i> netty
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#7%E6%AC%BE%E7%BB%8F%E5%85%B8%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="nav-number">1.</span> <span class="nav-text">7款经典的垃圾回收器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7%E6%AC%BE%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8%E4%B8%8E%E5%9E%83%E5%9C%BE%E5%88%86%E4%BB%A3%E4%B9%8B%E9%97%B4%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">2.</span> <span class="nav-text">7款垃圾回收器与垃圾分代之间的关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9E%83%E5%9C%BE%E6%94%B6%E9%9B%86%E5%99%A8%E7%9A%84%E7%BB%84%E5%90%88%E5%85%B3%E7%B3%BB"><span class="nav-number">3.</span> <span class="nav-text">垃圾收集器的组合关系</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Serial-%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">Serial 回收器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ParNew-%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">ParNew 回收器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Parallel-%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="nav-number">6.</span> <span class="nav-text">Parallel 回收器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CMS-%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="nav-number">7.</span> <span class="nav-text">CMS 回收器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">8.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#G1%E5%9B%9E%E6%94%B6%E5%99%A8"><span class="nav-number">9.</span> <span class="nav-text">G1回收器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#G1-%E7%9A%84%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E8%BF%87%E7%A8%8B"><span class="nav-number">10.</span> <span class="nav-text">G1 的垃圾回收过程</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Chen Chang Xi"
+      src="/images/aa.jpg">
+  <p class="site-author-name" itemprop="name">Chen Chang Xi</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/ccxblog" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;ccxblog" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Chen Chang Xi</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,0' opacity='0.4' zIndex='-1' count='120' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+
+
+<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"log":false,"pluginJsPath":"lib/","pluginModelPath":"assets/","pluginRootPath":"live2dw/","tagMode":false});</script></body>
+</html>
