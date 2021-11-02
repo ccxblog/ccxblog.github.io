@@ -155,6 +155,774 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ccxblog.gitee.io/2021/10/28/mongodb/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/aa.jpg">
+      <meta itemprop="name" content="Chen Chang Xi">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XixiBlog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/10/28/mongodb/" class="post-title-link" itemprop="url">MongoDB</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-10-28 13:37:50" itemprop="dateCreated datePublished" datetime="2021-10-28T13:37:50+08:00">2021-10-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-02 21:18:09" itemprop="dateModified" datetime="2021-11-02T21:18:09+08:00">2021-11-02</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MongoDB/" itemprop="url" rel="index"><span itemprop="name">MongoDB</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <meta name="referrer" content="no-referrer" />
+
+
+
+<h3 id="MongoDB-简介"><a href="#MongoDB-简介" class="headerlink" title="MongoDB 简介"></a>MongoDB 简介</h3><p>MongoDB 是一个开源，高性能，无模式的文档型数据库，当初设计就是用于简化开发和方便拓展，是NoSQL数据库产品的一种。是最像关系型数据库的非关系型数据库。</p>
+<p>它支持的数据结构是类似 JSON 的格式叫 BSON 。</p>
+<p>MongoDB中记录的是一个文档，他是一个由字段和值对组成的数据结构。</p>
+<h3 id="MongoDB-默认数据库"><a href="#MongoDB-默认数据库" class="headerlink" title="MongoDB 默认数据库"></a>MongoDB 默认数据库</h3><ol>
+<li>admin:从权限角度看这是 root 数据库，要是将一个用户添加到这个数据库，这个用户将自动继承所有数据库权限。</li>
+<li>local：这个数据永远不会被复制，可以用来存储限于本地单台服务器的任意集合。</li>
+<li>config：用于保存分片相关的信息。</li>
+</ol>
+<h3 id="MongoDB-启动"><a href="#MongoDB-启动" class="headerlink" title="MongoDB 启动"></a>MongoDB 启动</h3><ol>
+<li>命令启动： mongod –dbpath=../data   需要指定我们的数据存储目录，这里是存放再上一级目录的data目录下，启动的默认端口是 27017</li>
+<li>配置文件。。</li>
+</ol>
+<ul>
+<li>连接MongoDB<ol>
+<li>cmd 输入 <code>mongo</code> 默认连接本地 ， 也可以主动设置如：<code>mongo --host=localhost -- port = 27017</code></li>
+</ol>
+</li>
+</ul>
+<h3 id="基本常用命令"><a href="#基本常用命令" class="headerlink" title="基本常用命令"></a>基本常用命令</h3><ul>
+<li>数据库常用操作</li>
+</ul>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">use 数据库名称 <span class="token comment">## 创建或选择数据库，没有就创建，有就切换到当前库</span>
+show dbs <span class="token comment">## 显示所有数据库 </span>
+db <span class="token comment">## 查看当前正在使用的db</span>
+db.dropDatabase<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">## 用来删除已经持久化的数据库</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>集合的操作</li>
+</ul>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">db.createCollection<span class="token punctuation">(</span>name<span class="token punctuation">)</span> <span class="token comment">## 显示创建一个集合</span>
+show collections <span class="token comment">## 查看所有集合</span>
+db.集合名称.drop<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">## 删除集合</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+<ul>
+<li>文档的CRUD</li>
+</ul>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span> 单个文档插入
+使用 insert<span class="token punctuation">(</span><span class="token punctuation">)</span> 或 save<span class="token punctuation">(</span><span class="token punctuation">)</span>方法先集合中插入文档
+db.集合名称.insert<span class="token punctuation">(</span><span class="token punctuation">&#123;</span><span class="token string">"ccx"</span><span class="token builtin class-name">:</span><span class="token string">"666"</span> , <span class="token string">"name"</span><span class="token builtin class-name">:</span><span class="token string">"aaa"</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span> <span class="token comment">## 如果集合不存在则会创建集合。</span>
+
+<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span> 查询
+db.集合名称.find<span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token comment">## 查询集合中所有数据。</span>
+db.集合名称.find<span class="token punctuation">(</span><span class="token punctuation">&#123;</span><span class="token string">"ccx"</span><span class="token builtin class-name">:</span><span class="token string">"666"</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span> <span class="token comment">## 指定条件查询。</span>
+db.集合名称.findOne<span class="token punctuation">(</span><span class="token punctuation">&#123;</span><span class="token string">"ccx"</span><span class="token builtin class-name">:</span><span class="token string">"666"</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span> <span class="token comment">## 返回符合条件的第一条数据。</span>
+
+<span class="token punctuation">(</span><span class="token number">3</span><span class="token punctuation">)</span> 批量插入
+db.集合名称.insertMany<span class="token punctuation">(</span><span class="token punctuation">[</span><span class="token punctuation">&#123;</span><span class="token string">"a"</span><span class="token builtin class-name">:</span><span class="token string">"1"</span> , <span class="token string">"b"</span><span class="token builtin class-name">:</span><span class="token string">"2"</span><span class="token punctuation">&#125;</span> , <span class="token punctuation">&#123;</span><span class="token string">"c"</span><span class="token builtin class-name">:</span><span class="token string">"3"</span> , <span class="token string">"d"</span><span class="token builtin class-name">:</span><span class="token string">"4"</span><span class="token punctuation">&#125;</span><span class="token punctuation">]</span><span class="token punctuation">)</span>
+
+<span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">)</span> 投影查询 
+db.集合名称.find<span class="token punctuation">(</span><span class="token punctuation">&#123;</span>ccx:<span class="token string">"aaa"</span><span class="token punctuation">&#125;</span> , <span class="token punctuation">&#123;</span>name:0<span class="token punctuation">&#125;</span><span class="token punctuation">)</span> <span class="token comment">## 为0表示不显示name为1表示显示</span>
+
+<span class="token punctuation">(</span><span class="token number">5</span><span class="token punctuation">)</span> 覆盖修改
+db.集合名称.update<span class="token punctuation">(</span><span class="token punctuation">&#123;</span><span class="token string">"ccx"</span> <span class="token builtin class-name">:</span> <span class="token string">"666"</span><span class="token punctuation">&#125;</span> , <span class="token punctuation">&#123;</span>name:<span class="token string">"777"</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span> <span class="token comment">## 第一个是查询条件，第二个是修改的内容</span>
+
+<span class="token punctuation">(</span><span class="token number">6</span><span class="token punctuation">)</span> 局部修改
+db.集合名称.update<span class="token punctuation">(</span><span class="token punctuation">&#123;</span>_id:<span class="token string">"2"</span><span class="token punctuation">&#125;</span> , <span class="token punctuation">&#123;</span><span class="token variable">$set</span>:<span class="token punctuation">&#123;</span>name:<span class="token string">"777"</span><span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span> 
+
+对应修改数据默认是修改第一条数据
+<span class="token punctuation">(</span><span class="token number">7</span><span class="token punctuation">)</span> 批量修改
+db.集合名称.update<span class="token punctuation">(</span><span class="token punctuation">&#123;</span>_id:<span class="token string">"2"</span><span class="token punctuation">&#125;</span> , <span class="token punctuation">&#123;</span><span class="token variable">$set</span>:<span class="token punctuation">&#123;</span>name:<span class="token string">"777"</span><span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span> , <span class="token punctuation">&#123;</span>multi:true<span class="token punctuation">&#125;</span><span class="token punctuation">)</span> 
+
+<span class="token punctuation">(</span><span class="token number">8</span><span class="token punctuation">)</span> inc增长修改
+db.集合名称.update<span class="token punctuation">(</span><span class="token punctuation">&#123;</span>_id:<span class="token string">"2"</span><span class="token punctuation">&#125;</span> , <span class="token punctuation">&#123;</span><span class="token variable">$inc</span>:<span class="token punctuation">&#123;</span>num:NumberInt<span class="token punctuation">(</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token punctuation">&#125;</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span> <span class="token comment">## 对id为2的num每次加1</span>
+
+
+<span class="token punctuation">(</span><span class="token number">9</span><span class="token punctuation">)</span> 删除文档
+db.集合名称.remove<span class="token punctuation">(</span>条件<span class="token punctuation">)</span> <span class="token comment">## 删除满足指定条件的文档</span>
+db.集合名称.remove<span class="token punctuation">(</span><span class="token punctuation">&#123;</span><span class="token punctuation">&#125;</span><span class="token punctuation">)</span>  <span class="token comment">## 删除所有文档</span>
+
+<span class="token punctuation">(</span><span class="token number">10</span><span class="token punctuation">)</span> 统计查询
+db.集合名称.count<span class="token punctuation">(</span>条件<span class="token punctuation">)</span>  <span class="token comment">## 返回满足条件的记录数</span>
+
+<span class="token punctuation">(</span><span class="token number">11</span><span class="token punctuation">)</span> 分页查询
+db.集合名称.find<span class="token punctuation">(</span><span class="token punctuation">)</span>.skip<span class="token punctuation">(</span><span class="token number">4</span><span class="token punctuation">)</span>.limit<span class="token punctuation">(</span><span class="token number">2</span><span class="token punctuation">)</span> <span class="token comment">## 跳过前4条，每页显示2条</span>
+
+<span class="token punctuation">(</span><span class="token number">12</span><span class="token punctuation">)</span> 排序查询
+db.集合名称.find<span class="token punctuation">(</span><span class="token punctuation">)</span>.sort<span class="token punctuation">(</span><span class="token punctuation">&#123;</span>key:1<span class="token punctuation">&#125;</span><span class="token punctuation">)</span> <span class="token comment">## 根据key排序，升序就是1，降是-1</span>
+
+skip<span class="token punctuation">(</span><span class="token punctuation">)</span> ，limit 和sort 同时使用的时候执行顺序是先sort，然后是skip最后显示的是limit<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="MongoDB-索引类型"><a href="#MongoDB-索引类型" class="headerlink" title="MongoDB 索引类型"></a>MongoDB 索引类型</h3><p>MongoDB使用的是 B树索引</p>
+<ol>
+<li>单字段索引：在文档的单个字段上创建用户定义的升序/降序索引称为单字段索引。</li>
+<li>复合索引：如复合索引由{userid:1 , score:-1} 组成，则索引首先按userid正序排序，然后再按，score降序排序。</li>
+</ol>
+<ul>
+<li>查看集合中的索引</li>
+</ul>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">db.集合名称.getIndexes<span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<ul>
+<li>创建索引</li>
+</ul>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">db.集合名称.createIndex<span class="token punctuation">(</span><span class="token punctuation">&#123;</span>userid:1<span class="token punctuation">&#125;</span><span class="token punctuation">)</span> <span class="token comment">## 创建升序索引</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<h3 id="实战-文章评论的后端开发"><a href="#实战-文章评论的后端开发" class="headerlink" title="实战 文章评论的后端开发"></a>实战 文章评论的后端开发</h3><p>需要实现一下功能</p>
+<ol>
+<li>基本增删改查API</li>
+<li>根据文章id查询评论</li>
+<li>评论点赞</li>
+</ol>
+<ul>
+<li>表结构分析</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>专栏文章评论</th>
+<th>comment</th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>字段名称</td>
+<td>字段含义</td>
+<td>字段类型</td>
+<td>备注</td>
+</tr>
+<tr>
+<td>_id</td>
+<td>ID</td>
+<td>Object或String</td>
+<td>Mongo的主要字段</td>
+</tr>
+<tr>
+<td>articleid</td>
+<td>文章id</td>
+<td>String</td>
+<td></td>
+</tr>
+<tr>
+<td>content</td>
+<td>评论内容</td>
+<td>String</td>
+<td></td>
+</tr>
+<tr>
+<td>userid</td>
+<td>评论人ID</td>
+<td>String</td>
+<td></td>
+</tr>
+<tr>
+<td>nickname</td>
+<td>评论人呢称</td>
+<td>String</td>
+<td></td>
+</tr>
+<tr>
+<td>createTime</td>
+<td>评论创建时间</td>
+<td>Data</td>
+<td></td>
+</tr>
+<tr>
+<td>likenum</td>
+<td>点赞数</td>
+<td>int32</td>
+<td></td>
+</tr>
+<tr>
+<td>replynum</td>
+<td>回复数</td>
+<td>int32</td>
+<td></td>
+</tr>
+<tr>
+<td>state</td>
+<td>状态</td>
+<td>String</td>
+<td></td>
+</tr>
+<tr>
+<td>parentid</td>
+<td>上级ID</td>
+<td>String</td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li>引入依赖</li>
+</ul>
+<pre class="line-numbers language-xml" data-language="xml"><code class="language-xml"><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.springframework.boot<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-boot-starter-test<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>scope</span><span class="token punctuation">></span></span>test<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>scope</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>dependency</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>groupId</span><span class="token punctuation">></span></span>org.springframework.boot<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>groupId</span><span class="token punctuation">></span></span>
+        <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>artifactId</span><span class="token punctuation">></span></span>spring-boot-starter-data-mongodb<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>artifactId</span><span class="token punctuation">></span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>dependency</span><span class="token punctuation">></span></span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<ul>
+<li>写yaml</li>
+</ul>
+<pre class="line-numbers language-yaml" data-language="yaml"><code class="language-yaml"><span class="token key atrule">spiring</span><span class="token punctuation">:</span>
+  <span class="token comment">#数据源配置</span>
+  <span class="token key atrule">data</span><span class="token punctuation">:</span>
+    <span class="token key atrule">mongodb</span><span class="token punctuation">:</span>
+      <span class="token comment">#主机地址</span>
+      <span class="token key atrule">host</span><span class="token punctuation">:</span> locahost
+      <span class="token comment">#数据库</span>
+      <span class="token key atrule">database</span><span class="token punctuation">:</span> test
+      <span class="token comment">#默认端口时27017</span>
+      <span class="token key atrule">port</span><span class="token punctuation">:</span> <span class="token number">27017</span>
+      <span class="token comment">#也可以使用url连接</span>
+      <span class="token comment">#url:mongodb://localhost:27017/test</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<ul>
+<li>创建业务实体类</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">com<span class="token punctuation">.</span>mymongodb<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>po</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">Id</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>mongodb<span class="token punctuation">.</span>core<span class="token punctuation">.</span>index<span class="token punctuation">.</span></span><span class="token class-name">CompoundIndex</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>mongodb<span class="token punctuation">.</span>core<span class="token punctuation">.</span>index<span class="token punctuation">.</span></span><span class="token class-name">Indexed</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>mongodb<span class="token punctuation">.</span>core<span class="token punctuation">.</span>mapping<span class="token punctuation">.</span></span><span class="token class-name">Document</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>mongodb<span class="token punctuation">.</span>core<span class="token punctuation">.</span>mapping<span class="token punctuation">.</span></span><span class="token class-name">Field</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>io<span class="token punctuation">.</span></span><span class="token class-name">Serializable</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>time<span class="token punctuation">.</span></span><span class="token class-name">LocalDateTime</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">Date</span><span class="token punctuation">;</span>
+
+<span class="token comment">/**
+ * 文章评论实体类
+ */</span>
+<span class="token comment">//把一个java类声明为mongodb的文档，可以通过collection参数指定这个类对应的文档。</span>
+<span class="token comment">//@Document(collection="mongodb 对应 collection 名")</span>
+<span class="token comment">// 若未加 @Document ，该 bean save 到 mongo 的 comment collection</span>
+<span class="token comment">// 若添加 @Document ，则 save 到 comment collection</span>
+<span class="token annotation punctuation">@Document</span><span class="token punctuation">(</span>collection<span class="token operator">=</span><span class="token string">"comment"</span><span class="token punctuation">)</span><span class="token comment">//可以省略，如果省略，则默认使用类名小写映射集合</span>
+<span class="token comment">//复合索引</span>
+<span class="token annotation punctuation">@CompoundIndex</span><span class="token punctuation">(</span> def <span class="token operator">=</span> <span class="token string">"&#123;'userid': 1, 'nickname': -1&#125;"</span><span class="token punctuation">)</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">Comment</span> <span class="token keyword">implements</span> <span class="token class-name">Serializable</span> <span class="token punctuation">&#123;</span>
+    <span class="token comment">//主键标识，该属性的值会自动对应mongodb的主键字段"_id"，如果该属性名就叫“id”,则该注解可以省略，否则必须写</span>
+<span class="token comment">//    @Id</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> id<span class="token punctuation">;</span><span class="token comment">//主键</span>
+    <span class="token comment">//该属性对应mongodb的字段的名字，如果一致，则无需该注解</span>
+    <span class="token annotation punctuation">@Field</span><span class="token punctuation">(</span><span class="token string">"content"</span><span class="token punctuation">)</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> content<span class="token punctuation">;</span><span class="token comment">//吐槽内容</span>
+    <span class="token keyword">private</span> <span class="token class-name">Date</span> publishtime<span class="token punctuation">;</span><span class="token comment">//发布日期</span>
+    <span class="token comment">//添加了一个单字段的索引</span>
+    <span class="token annotation punctuation">@Indexed</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> userid<span class="token punctuation">;</span><span class="token comment">//发布人ID</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> nickname<span class="token punctuation">;</span><span class="token comment">//昵称</span>
+    <span class="token keyword">private</span> <span class="token class-name">LocalDateTime</span> createdatetime<span class="token punctuation">;</span><span class="token comment">//评论的日期时间</span>
+    <span class="token keyword">private</span> <span class="token class-name">Integer</span> likenum<span class="token punctuation">;</span><span class="token comment">//点赞数</span>
+    <span class="token keyword">private</span> <span class="token class-name">Integer</span> replynum<span class="token punctuation">;</span><span class="token comment">//回复数</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> state<span class="token punctuation">;</span><span class="token comment">//状态</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> parentid<span class="token punctuation">;</span><span class="token comment">//上级ID</span>
+    <span class="token keyword">private</span> <span class="token class-name">String</span> articleid<span class="token punctuation">;</span>
+    <span class="token comment">//getter and setter.....</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">getId</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> id<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setId</span><span class="token punctuation">(</span><span class="token class-name">String</span> id<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>id <span class="token operator">=</span> id<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">getContent</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> content<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setContent</span><span class="token punctuation">(</span><span class="token class-name">String</span> content<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>content <span class="token operator">=</span> content<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">Date</span> <span class="token function">getPublishtime</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> publishtime<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setPublishtime</span><span class="token punctuation">(</span><span class="token class-name">Date</span> publishtime<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>publishtime <span class="token operator">=</span> publishtime<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">getUserid</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> userid<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setUserid</span><span class="token punctuation">(</span><span class="token class-name">String</span> userid<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>userid <span class="token operator">=</span> userid<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">getNickname</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> nickname<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setNickname</span><span class="token punctuation">(</span><span class="token class-name">String</span> nickname<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>nickname <span class="token operator">=</span> nickname<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">LocalDateTime</span> <span class="token function">getCreatedatetime</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> createdatetime<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setCreatedatetime</span><span class="token punctuation">(</span><span class="token class-name">LocalDateTime</span> createdatetime<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>createdatetime <span class="token operator">=</span> createdatetime<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">Integer</span> <span class="token function">getLikenum</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> likenum<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setLikenum</span><span class="token punctuation">(</span><span class="token class-name">Integer</span> likenum<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>likenum <span class="token operator">=</span> likenum<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">Integer</span> <span class="token function">getReplynum</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> replynum<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setReplynum</span><span class="token punctuation">(</span><span class="token class-name">Integer</span> replynum<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>replynum <span class="token operator">=</span> replynum<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">getState</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> state<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setState</span><span class="token punctuation">(</span><span class="token class-name">String</span> state<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>state <span class="token operator">=</span> state<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">getParentid</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> parentid<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setParentid</span><span class="token punctuation">(</span><span class="token class-name">String</span> parentid<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>parentid <span class="token operator">=</span> parentid<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">getArticleid</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> articleid<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">setArticleid</span><span class="token punctuation">(</span><span class="token class-name">String</span> articleid<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">this</span><span class="token punctuation">.</span>articleid <span class="token operator">=</span> articleid<span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token annotation punctuation">@Override</span>
+    <span class="token keyword">public</span> <span class="token class-name">String</span> <span class="token function">toString</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> <span class="token string">"Comment&#123;"</span> <span class="token operator">+</span>
+                <span class="token string">"id='"</span> <span class="token operator">+</span> id <span class="token operator">+</span> <span class="token string">'\''</span> <span class="token operator">+</span>
+                <span class="token string">", content='"</span> <span class="token operator">+</span> content <span class="token operator">+</span> <span class="token string">'\''</span> <span class="token operator">+</span>
+                <span class="token string">", publishtime="</span> <span class="token operator">+</span> publishtime <span class="token operator">+</span>
+                <span class="token string">", userid='"</span> <span class="token operator">+</span> userid <span class="token operator">+</span> <span class="token string">'\''</span> <span class="token operator">+</span>
+                <span class="token string">", nickname='"</span> <span class="token operator">+</span> nickname <span class="token operator">+</span> <span class="token string">'\''</span> <span class="token operator">+</span>
+                <span class="token string">", createdatetime="</span> <span class="token operator">+</span> createdatetime <span class="token operator">+</span>
+                <span class="token string">", likenum="</span> <span class="token operator">+</span> likenum <span class="token operator">+</span>
+                <span class="token string">", replynum="</span> <span class="token operator">+</span> replynum <span class="token operator">+</span>
+                <span class="token string">", state='"</span> <span class="token operator">+</span> state <span class="token operator">+</span> <span class="token string">'\''</span> <span class="token operator">+</span>
+                <span class="token string">", parentid='"</span> <span class="token operator">+</span> parentid <span class="token operator">+</span> <span class="token string">'\''</span> <span class="token operator">+</span>
+                <span class="token string">", articleid='"</span> <span class="token operator">+</span> articleid <span class="token operator">+</span> <span class="token string">'\''</span> <span class="token operator">+</span>
+                <span class="token string">'&#125;'</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<ul>
+<li>dao 接口</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">com<span class="token punctuation">.</span>mymongodb<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>dao</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">com<span class="token punctuation">.</span>mymongodb<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>po<span class="token punctuation">.</span></span><span class="token class-name">Comment</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>domain<span class="token punctuation">.</span></span><span class="token class-name">Page</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>domain<span class="token punctuation">.</span></span><span class="token class-name">Pageable</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>mongodb<span class="token punctuation">.</span>repository<span class="token punctuation">.</span></span><span class="token class-name">MongoRepository</span><span class="token punctuation">;</span>
+
+<span class="token keyword">public</span> <span class="token keyword">interface</span> <span class="token class-name">CommentRepository</span> <span class="token keyword">extends</span> <span class="token class-name">MongoRepository</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Comment</span><span class="token punctuation">,</span><span class="token class-name">String</span> <span class="token punctuation">></span></span> <span class="token punctuation">&#123;</span>
+
+
+    <span class="token class-name">Page</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Comment</span><span class="token punctuation">></span></span> <span class="token function">findByParentid</span><span class="token punctuation">(</span><span class="token class-name">String</span> parentid<span class="token punctuation">,</span> <span class="token class-name">Pageable</span> pageable<span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token punctuation">&#125;</span>
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<ul>
+<li>service 类</li>
+</ul>
+<pre class="line-numbers language-java" data-language="java"><code class="language-java"><span class="token keyword">package</span> <span class="token namespace">com<span class="token punctuation">.</span>mymongodb<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>service</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">com<span class="token punctuation">.</span>mymongodb<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>dao<span class="token punctuation">.</span></span><span class="token class-name">CommentRepository</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">com<span class="token punctuation">.</span>mymongodb<span class="token punctuation">.</span>demo<span class="token punctuation">.</span>po<span class="token punctuation">.</span></span><span class="token class-name">Comment</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>beans<span class="token punctuation">.</span>factory<span class="token punctuation">.</span>annotation<span class="token punctuation">.</span></span><span class="token class-name">Autowired</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>domain<span class="token punctuation">.</span></span><span class="token class-name">Page</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>domain<span class="token punctuation">.</span></span><span class="token class-name">PageRequest</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>mongodb<span class="token punctuation">.</span>core<span class="token punctuation">.</span></span><span class="token class-name">MongoTemplate</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>mongodb<span class="token punctuation">.</span>core<span class="token punctuation">.</span>query<span class="token punctuation">.</span></span><span class="token class-name">Criteria</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>mongodb<span class="token punctuation">.</span>core<span class="token punctuation">.</span>query<span class="token punctuation">.</span></span><span class="token class-name">Query</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>data<span class="token punctuation">.</span>mongodb<span class="token punctuation">.</span>core<span class="token punctuation">.</span>query<span class="token punctuation">.</span></span><span class="token class-name">Update</span><span class="token punctuation">;</span>
+<span class="token keyword">import</span> <span class="token namespace">org<span class="token punctuation">.</span>springframework<span class="token punctuation">.</span>stereotype<span class="token punctuation">.</span></span><span class="token class-name">Service</span><span class="token punctuation">;</span>
+
+<span class="token keyword">import</span> <span class="token namespace">java<span class="token punctuation">.</span>util<span class="token punctuation">.</span></span><span class="token class-name">List</span><span class="token punctuation">;</span>
+
+<span class="token annotation punctuation">@Service</span>
+<span class="token keyword">public</span> <span class="token keyword">class</span> <span class="token class-name">CommentService</span> <span class="token punctuation">&#123;</span>
+
+    <span class="token annotation punctuation">@Autowired</span>
+    <span class="token keyword">private</span> <span class="token class-name">CommentRepository</span> commentRepository<span class="token punctuation">;</span>
+    <span class="token annotation punctuation">@Autowired</span>
+    <span class="token keyword">private</span> <span class="token class-name">MongoTemplate</span> mongoTemplate<span class="token punctuation">;</span>
+
+
+
+    <span class="token comment">/**
+     * 保存一个评论
+     * @param comment
+     */</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">saveComment</span><span class="token punctuation">(</span><span class="token class-name">Comment</span> comment<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">//如果需要自定义主键，可以在这里指定主键；如果不指定主键，MongoDB会自动生成主键</span>
+        <span class="token comment">//设置一些默认初始值。。。</span>
+        <span class="token comment">//调用dao</span>
+        commentRepository<span class="token punctuation">.</span><span class="token function">save</span><span class="token punctuation">(</span>comment<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token comment">/**
+     * 更新评论
+     * @param comment
+     */</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">updateComment</span><span class="token punctuation">(</span><span class="token class-name">Comment</span> comment<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">//调用dao</span>
+        commentRepository<span class="token punctuation">.</span><span class="token function">save</span><span class="token punctuation">(</span>comment<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token comment">/**
+     * 根据id删除评论
+     * @param id
+     */</span>
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">deleteCommentById</span><span class="token punctuation">(</span><span class="token class-name">String</span> id<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">//调用dao</span>
+        commentRepository<span class="token punctuation">.</span><span class="token function">deleteById</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token comment">/**
+     * 查询所有评论
+     * @return
+     */</span>
+    <span class="token keyword">public</span> <span class="token class-name">List</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Comment</span><span class="token punctuation">></span></span> <span class="token function">findCommentList</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">//调用dao</span>
+        <span class="token keyword">return</span> commentRepository<span class="token punctuation">.</span><span class="token function">findAll</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token comment">/**
+     * 根据id查询评论
+     * @param id
+     * @return
+     */</span>
+    <span class="token keyword">public</span> <span class="token class-name">Comment</span> <span class="token function">findCommentById</span><span class="token punctuation">(</span><span class="token class-name">String</span> id<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+        <span class="token comment">//调用dao</span>
+        <span class="token keyword">return</span> commentRepository<span class="token punctuation">.</span><span class="token function">findById</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">get</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+
+    <span class="token keyword">public</span> <span class="token class-name">Page</span><span class="token generics"><span class="token punctuation">&lt;</span><span class="token class-name">Comment</span><span class="token punctuation">></span></span> <span class="token function">findCommentListByParentid</span><span class="token punctuation">(</span><span class="token class-name">String</span> parentid<span class="token punctuation">,</span><span class="token keyword">int</span> page<span class="token punctuation">,</span><span class="token keyword">int</span> size<span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+        <span class="token keyword">return</span> commentRepository<span class="token punctuation">.</span><span class="token function">findByParentid</span><span class="token punctuation">(</span>parentid<span class="token punctuation">,</span><span class="token class-name">PageRequest</span><span class="token punctuation">.</span><span class="token function">of</span><span class="token punctuation">(</span>page<span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">,</span>size<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+
+    <span class="token keyword">public</span> <span class="token keyword">void</span> <span class="token function">updateCommentLikenum</span><span class="token punctuation">(</span><span class="token class-name">String</span> id<span class="token punctuation">)</span><span class="token punctuation">&#123;</span>
+
+        <span class="token comment">//  查询条件</span>
+        <span class="token class-name">Query</span> query <span class="token operator">=</span> <span class="token class-name">Query</span><span class="token punctuation">.</span><span class="token function">query</span><span class="token punctuation">(</span><span class="token class-name">Criteria</span><span class="token punctuation">.</span><span class="token function">where</span><span class="token punctuation">(</span><span class="token string">"_id"</span><span class="token punctuation">)</span><span class="token punctuation">.</span><span class="token function">is</span><span class="token punctuation">(</span>id<span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        <span class="token comment">//  更新条件</span>
+        <span class="token class-name">Update</span> update <span class="token operator">=</span> <span class="token keyword">new</span> <span class="token class-name">Update</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        update<span class="token punctuation">.</span><span class="token function">inc</span><span class="token punctuation">(</span><span class="token string">"likenum"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+        mongoTemplate<span class="token punctuation">.</span><span class="token function">updateFirst</span><span class="token punctuation">(</span>query<span class="token punctuation">,</span>update<span class="token punctuation">,</span><span class="token class-name">Comment</span><span class="token punctuation">.</span><span class="token keyword">class</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+    <span class="token punctuation">&#125;</span>
+<span class="token punctuation">&#125;</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+      
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://ccxblog.gitee.io/2021/10/26/docker/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/aa.jpg">
+      <meta itemprop="name" content="Chen Chang Xi">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XixiBlog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/10/26/docker/" class="post-title-link" itemprop="url">docker入门</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-10-26 15:19:45" itemprop="dateCreated datePublished" datetime="2021-10-26T15:19:45+08:00">2021-10-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-10-28 13:36:44" itemprop="dateModified" datetime="2021-10-28T13:36:44+08:00">2021-10-28</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Docker/" itemprop="url" rel="index"><span itemprop="name">Docker</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <meta name="referrer" content="no-referrer" />
+
+
+
+<h2 id="Docker-安装"><a href="#Docker-安装" class="headerlink" title="Docker 安装"></a>Docker 安装</h2><h3 id="Docker-基本组成"><a href="#Docker-基本组成" class="headerlink" title="Docker 基本组成"></a>Docker 基本组成</h3><p><img src="http://hainiubl.com/images/2016/architecture.jpg"></p>
+<p>​        docker是一种linux容器技术。容器有效的将由单个操作系统挂管理的资源划分到孤立的组中，以便更好的在组之间平衡有冲突的资源使用需求。可简单理解为一种沙盒 。每个容器内运行一个应用，不同的容器之间相互隔离，容器之间也可以建立通信机制。容器的创建和停止都十分快速，资源需求远远低于虚拟机。</p>
+<p>docker的整个生命周期有三部分组成：镜像（image）+容器（container）+仓库（repository）；容器是由镜像实例化而来，这和我们学习的面向对象的概念十分相似，我们可以把镜像看作类，把容器看作类实例化后的对象。</p>
+<p>也可以说镜像是文件, 容器是进程。 容器是基于镜像创建的, 即容器中的进程依赖于镜像中的文件, 这里的文件包括进程运行所需要的可执行文件， 依赖软件， 库文件， 配置文件等等…</p>
+<h3 id="安装步骤"><a href="#安装步骤" class="headerlink" title="安装步骤"></a>安装步骤</h3><ol>
+<li>卸载残留</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum remove docker <span class="token punctuation">\</span>
+                  docker-client <span class="token punctuation">\</span>
+                  docker-client-latest <span class="token punctuation">\</span>
+                  docker-common <span class="token punctuation">\</span>
+                  docker-latest <span class="token punctuation">\</span>
+                  docker-latest-logrotate <span class="token punctuation">\</span>
+                  docker-logrotate <span class="token punctuation">\</span>
+                  docker-engine<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<ol start="2">
+<li>安装需要的安装包</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum <span class="token function">install</span> -y yum-utils<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<ol start="3">
+<li>使用阿里云镜像</li>
+</ol>
+<pre class="line-numbers language-she" data-language="she"><code class="language-she">yum-config-manager --add-repo http:&#x2F;&#x2F;mirrors.aliyun.com&#x2F;docker-ce&#x2F;linux&#x2F;centos&#x2F;docker-ce.repo<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<ol start="4">
+<li>安装 docker 相关的源</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">yum <span class="token function">install</span> docker-ce docker-ce-cli containerd.ioz<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<ol start="5">
+<li>最后启动 docker</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">systemctl start docker
+-- 可以通过docker version 查看版本号<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+
+
+<ol start="6">
+<li>开启阿里云镜像加速</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token function">sudo</span> <span class="token function">mkdir</span> -p /etc/docker
+<span class="token function">sudo</span> <span class="token function">tee</span> /etc/docker/daemon.json <span class="token operator">&lt;&lt;-</span><span class="token string">'EOF'
+&#123;
+  "registry-mirrors": ["https://5xpu7h9m.mirror.aliyuncs.com"]
+&#125;
+EOF</span>
+<span class="token function">sudo</span> systemctl daemon-reload
+<span class="token function">sudo</span> systemctl restart docker<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<h3 id="Docker-常用命令"><a href="#Docker-常用命令" class="headerlink" title="Docker 常用命令"></a>Docker 常用命令</h3><ul>
+<li>帮助命令</li>
+</ul>
+<pre class="line-numbers language-none"><code class="language-none">docker version -- 看版本信息
+docker info -- 显示 docker 系统信息，包含镜像和容器数量
+docker --help -- 帮助命令<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+
+
+
+<ul>
+<li>镜像命令</li>
+</ul>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">docker images <span class="token comment">## 查看</span>
+docker search mysql  <span class="token comment">## 搜索(mysql)镜像 </span>
+docker pull mysql:<span class="token punctuation">[</span>tag<span class="token punctuation">]</span>  <span class="token comment">## 下载（mysql）镜像</span>
+docker rmi mysql <span class="token comment">## 删除镜像，可以通过id或者名称删除</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+
+
+<ul>
+<li>容器命令</li>
+</ul>
+<p>我们有了镜像才能创建容器，下载一个centos镜像进行学习。</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">docker pull centos<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p>新建容器并启动</p>
+ <pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">docker run <span class="token punctuation">[</span>可选参数<span class="token punctuation">]</span> image
+
+<span class="token comment"># 参数说明</span>
+-- <span class="token assign-left variable">name</span><span class="token operator">=</span><span class="token string">"name"</span> <span class="token comment">## 给容器起别名</span>
+-d <span class="token comment">## 后台方式运行</span>
+-it <span class="token comment">## 以交互方式运行</span>
+-p <span class="token comment">## 指定容器的端口 8080:8080</span>
+-P <span class="token comment">## 随机一个端口</span>
+
+docker <span class="token function">ps</span> <span class="token comment">## 查看正在运行的镜像</span>
+docker <span class="token function">ps</span> -a <span class="token comment">## 查看全部运行的镜像</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>退出容器</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell"><span class="token builtin class-name">exit</span> <span class="token comment">## 退出并停止容器</span>
+ctrl + p + q <span class="token comment">## 退出不停止容器</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+
+<p>删除容器</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">docker <span class="token function">rm</span> 容器id <span class="token comment"># 删除容器，如果容器正在运行可以使用 rm -f 强制删除</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<p> 启动和停止容器的操作</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">docker start 容器id    <span class="token comment"># 启动容器</span>
+docker restart 容器id  <span class="token comment"># 重启容器</span>
+docker stop 容器id    <span class="token comment"># 停止当前正在运行的容器</span>
+docker <span class="token function">kill</span> 容器id    <span class="token comment"># 强制停止当前正在运行的容器</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+
+<p>进入容器</p>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">docker <span class="token builtin class-name">exec</span> -it 容器id <span class="token comment"># 以交互模式进入容器 </span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<h3 id="容器数据卷"><a href="#容器数据卷" class="headerlink" title="容器数据卷"></a>容器数据卷</h3><p>当我们在使用docker容器的时候，会产生一系列的数据文件，这些数据文件在我们关闭docker容器时是会消失的，但是其中产生的部分内容我们是希望能够把它给保存起来另作用途的，Docker将应用与运行环境打包成容器发布，我们希望在运行过程钟产生的部分数据是可以持久化的的，而且容器之间我们希望能够实现数据共享。</p>
+<ol>
+<li>使用命令挂载 -v</li>
+</ol>
+<pre class="line-numbers language-shell" data-language="shell"><code class="language-shell">docker run -it -v 主机目录:容器目录<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+
+
+<ol start="2">
+<li>DockerFiles</li>
+</ol>
+<p>dockerFile 是用来构建 docker 镜像的构建文件！我们可以通过它构建自己的镜像。</p>
+<h3 id="Docker-网络"><a href="#Docker-网络" class="headerlink" title="Docker 网络"></a>Docker 网络</h3><p>我们每启动一个docker容器，docker就会给docker容器分配一个ip，我们只要安装了docker，就会有一个网卡docker0.通过桥接模式完成，使用的是veth-pair技术！</p>
+
+      
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://ccxblog.gitee.io/2021/08/17/JVM%E5%9E%83%E5%9C%BE%E5%9B%9E%E6%94%B6%E5%99%A8/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -870,203 +1638,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://ccxblog.gitee.io/2021/04/30/SpringMVC/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/aa.jpg">
-      <meta itemprop="name" content="Chen Chang Xi">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XixiBlog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/30/SpringMVC/" class="post-title-link" itemprop="url">SpringMVC</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-30 14:27:49" itemprop="dateCreated datePublished" datetime="2021-04-30T14:27:49+08:00">2021-04-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-03 21:15:40" itemprop="dateModified" datetime="2021-05-03T21:15:40+08:00">2021-05-03</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">框架</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <meta name="referrer" content="no-referrer" />
-
-
-<h2 id="SpringMVC-的-hello-world"><a href="#SpringMVC-的-hello-world" class="headerlink" title="SpringMVC 的 hello world"></a>SpringMVC 的 hello world</h2><ol>
-<li>创建一个 JavaEE 工程</li>
-<li>导包<ul>
-<li>核心容器模块</li>
-<li>web模块</li>
-</ul>
-</li>
-<li>配置前端控制器：SpringMVC 思想是有一个前端控制器（<code>DispatcherServlet</code>）能拦截所有请求，并智能派发 ， 这个前端控制器是一个 Servlet。所以应该在 web.xml 中配置这个 Servlet。</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/30/SpringMVC/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://ccxblog.gitee.io/2021/04/28/Spring5/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/aa.jpg">
-      <meta itemprop="name" content="Chen Chang Xi">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="XixiBlog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/04/28/Spring5/" class="post-title-link" itemprop="url">Spring5</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-04-28 15:40:11" itemprop="dateCreated datePublished" datetime="2021-04-28T15:40:11+08:00">2021-04-28</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-calendar-check-o"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-04-29 21:16:05" itemprop="dateModified" datetime="2021-04-29T21:16:05+08:00">2021-04-29</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%A1%86%E6%9E%B6/" itemprop="url" rel="index"><span itemprop="name">框架</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <meta name="referrer" content="no-referrer" />
-
-
-<h2 id="Spring"><a href="#Spring" class="headerlink" title="Spring"></a>Spring</h2><ol>
-<li><p>Spring 是一个轻量级的开源的 JavaEE 框架</p>
-</li>
-<li><p>Spring 有两个核心部分 ：IOC 和 AOP </p>
-<ul>
-<li>IOC：控制反转 ， 把创建对象过程交给 Spring 进行管理</li>
-<li>AOP：面向切面，不修改源代码的情况下进行功能的增强</li>
-</ul>
-</li>
-<li><p>Spring 特点</p>
-<ul>
-<li>方便解耦，简化开发</li>
-<li>AOP编程的支持</li>
-<li>方便程序的测试</li>
-<li>方便整合其它框架</li>
-<li>方便进行事务的操作</li>
-<li>降低 ApI 的开发难度</li>
-</ul>
-</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2021/04/28/Spring5/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -1138,20 +1709,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">26</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">12</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-count">16</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
